@@ -24,7 +24,6 @@ app.get('/img/:key', async (c) => {
 app.get('/', (c) => {
     // https://hono.dev/docs/helpers/html
     return c.html(html`<!doctype html>
-<!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8">

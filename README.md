@@ -29,8 +29,8 @@ npm update --dry-run
 Create and use a local R2 storage bucket named "public" (.wrangler/state/v3/r2/public):
 
 ```shell
-npx wrangler r2 object put public/css/example.css --file public/css/example.css --local
-npx wrangler r2 object put wrackspurt-r2-production/css/example.css --file public/css/example.css
+npx wrangler r2 object put public/css/main.css --file public/css/main.css --local
+npx wrangler r2 object put wrackspurt-r2-production/css/main.css --file public/css/main.css
 ```
 
 Run the development server:
@@ -43,7 +43,7 @@ Test requests:
 
 ```shell
 curl -i http://localhost:8787/
-curl -i http://localhost:8787/css/example.css
+curl -i http://localhost:8787/css/main.css
 ```
 
 Deploy the service to Cloudflare:

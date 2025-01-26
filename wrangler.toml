@@ -18,10 +18,10 @@ routes = [
 # id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
 # https://developers.cloudflare.com/workers/wrangler/configuration/#r2-buckets
-#[[r2_buckets]]
-#binding = "R2_BUCKET"
-#bucket_name = "<PRODUCTION BUCKET NAME>"
-#preview_bucket_name = "public"
+[[r2_buckets]]
+binding = "R2_BUCKET"
+bucket_name = "wrackspurt-r2-production"
+preview_bucket_name = "public"
 
 # [[d1_databases]]
 # binding = "DB"

@@ -3,6 +3,45 @@ import { html, raw } from 'hono/html';
 
 const app = new Hono();
 
+app.use('*', async (c, next) => {
+    await next()
+
+    const logging_endpoint = c.env.LOGGING_ENDPOINT;
+
+    // Log this information
+    const log_payload = {
+        domain: c.req.header('host'),
+        path: c.req.path,
+        method: c.req.method,
+        ip: c.req.header('cf-connecting-ip'),
+        user_agent: c.req.header('user-agent'),
+        timestamp: new Date().toISOString(),
+    }
+
+    // Log the request to an external API location
+    if (logging_endpoint) {
+        const log_promise = fetch(logging_endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'User-Agent': `cf-worker-${c.req.header('host')}`,
+            },
+            body: JSON.stringify(log_payload),
+        })
+        .then(async res => {
+            console.log('Logging API POST status:', res.status);
+            if (!res.ok) {
+                console.error('Logging API failed response:', await res.text());
+            }
+        })
+        .catch((err) => {
+            console.error('Logging API POST fetch error:', err);
+        });
+
+        c.executionCtx?.waitUntil(log_promise);
+    }
+})
+
 app.get('/:dir{(css|img)}/:key', async (c) => {
     const key = `${c.req.param("dir")}/${c.req.param("key")}`;
     const object = await c.env.R2_BUCKET.get(key);

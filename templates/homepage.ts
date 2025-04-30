@@ -8,6 +8,8 @@ export function homepage(data: {
     pronunciation: string;
     explanation: string;
     meta: string;
+    css: object;
+    nonce: string;
 }) {
     return html`<!doctype html>
 <html lang="en">
@@ -18,8 +20,8 @@ export function homepage(data: {
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="/css/main.css" 
-        integrity="sha384-iaea82lf0S3vkHlJ5nA90SW2xwrE0d8SnrwpfsbGdSB4pEwhRqbM4dIk6lv0ikL5" />
+    <link rel="stylesheet" type="text/css" href="${data.css.path}" 
+        integrity="${data.css.integrity}" />
 </head>
 <body>
     <section id="container">

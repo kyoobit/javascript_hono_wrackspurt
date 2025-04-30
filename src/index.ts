@@ -6,6 +6,10 @@ import { getSecureHeaders } from '@helpers/headers';
 
 const app = new Hono();
 
+function generateNonce() {
+    return btoa(Math.random().toString(36).substring(2, 15));
+}
+
 app.use('*', async (c, next) => {
     await next()
 
@@ -75,6 +79,7 @@ app.get('/:dir{(css|img)}/:key', async (c) => {
 app.get('/', (c) => {
 
     // Data used in the HTML content template
+    const nonce = generateNonce();
     const data = {
         title: "wrackspurt",
         domain: "www.wrackspurt.com",
@@ -83,6 +88,12 @@ app.get('/', (c) => {
         pronunciation: "rak sp\u0259rt",
         explanation: "an invisible [magical] creature which floats into a person's ears, making their brain become unfocused and\u00A0confused.",
         meta: "Imaginative: (noun)",
+        css: {
+            path: "/css/main.css",
+            // echo "sha384-$(shasum -b -a 384 public/css/main.css | awk '{ print $1 }' | xxd -r -p | base64)"
+            integrity: "sha384-iaea82lf0S3vkHlJ5nA90SW2xwrE0d8SnrwpfsbGdSB4pEwhRqbM4dIk6lv0ikL5",
+        },
+        nonce: nonce,
     };
 
     // HTML content template
@@ -96,6 +107,7 @@ app.get('/', (c) => {
         // hash=$(shasum -b -a 384 FILENAME.js | awk '{ print $1 }' | xxd -r -p | base64)
         // echo "sha384-${hash}"
         script_hashes: [
+            `'nonce-${nonce}'`,
             // 'sha384-<HASH VALUE>',
         ],
     });
@@ -103,7 +115,7 @@ app.get('/', (c) => {
     // Cross-Origin Resource Sharing (CORS) HTTP response headers
     // https://developer.mozilla.org/en-US/docs/Web/Security/Practical_implementation_guides/CORS
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin
-    //headers['Access-Control-Allow-Origin'] = `https://${data.domain}/`;
+    headers['Access-Control-Allow-Origin'] = `https://${c.req.header('host')}/`;
 
     // https://hono.dev/docs/helpers/html
     return c.html(content, 200, headers);

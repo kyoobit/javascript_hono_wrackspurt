@@ -29,8 +29,10 @@ npm update --dry-run
 Create and use a local R2 storage bucket named "public" (.wrangler/state/v3/r2/public):
 
 ```shell
-npx wrangler r2 object put public/css/main.css --file public/css/main.css --local
-npx wrangler r2 object put wrackspurt-r2-production/css/main.css --file public/css/main.css
+for item in $(find public -type f -not -name '*.acorn'); do
+npx wrangler r2 object put ${item} --file ${item} --local
+npx wrangler r2 object put $(echo $item | sed 's|public|wrackspurt-r2-production|') --file ${item} --remote
+done
 ```
 
 Run the development server:
